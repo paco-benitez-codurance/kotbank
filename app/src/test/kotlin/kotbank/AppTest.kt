@@ -4,12 +4,40 @@
 package kotbank
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 
-class AppTest: StringSpec({
-    "should work" {
-        val app = App()
-        app.hello() shouldBe "hello"
+/*
+Given a client makes a deposit of 1000 on 10-01-2012
+And a deposit of 2000 on 13-01-2012
+And a withdrawal of 500 on 14-01-2012
+When they print their bank statement
+Then they would see:
+
+Date       || Amount || Balance
+14/01/2012 || -500   || 2500
+13/01/2012 || 2000   || 3000
+10/01/2012 || 1000   || 1000
+ */
+class AccountServiceAcceptanceTest : StringSpec({
+    "bank kata acceptance test" {
+        val accountService: AccountService = TODO()
+
+        //Set date on 10-01-2012
+        accountService.deposit(1000)
+
+        //Set date on 13-11-2012
+        accountService.deposit(2000)
+
+        //Set date on 14-11-2012
+        accountService.withdraw(500)
+
+        val expected = """
+            Date       || Amount || Balance
+            14/01/2012 || -500   || 2500
+            13/01/2012 || 2000   || 3000
+            10/01/2012 || 1000   || 1000
+        """.trimIndent()
+        accountService.printStatement()
+        //assert statement equal expected
     }
 
 })
