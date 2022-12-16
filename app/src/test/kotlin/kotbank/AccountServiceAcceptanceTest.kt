@@ -4,6 +4,10 @@
 package kotbank
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
+
 
 /*
 Given a client makes a deposit of 1000 on 10-01-2012
@@ -18,8 +22,13 @@ Date       || Amount || Balance
 10/01/2012 || 1000   || 1000
  */
 class AccountServiceAcceptanceTest : StringSpec({
-    "bank kata acceptance test" {
-        val accountService: AccountService = TODO()
+    var accountService: AccountService = AccountServiceImpl()
+
+    beforeEach { accountService = AccountServiceImpl() }
+    afterEach { }
+
+    "bank kata acceptance test".config(enabled = false) {
+        val accountService: AccountService = AccountServiceImpl()
 
         //Set date on 10-01-2012
         accountService.deposit(1000)
@@ -38,6 +47,21 @@ class AccountServiceAcceptanceTest : StringSpec({
         """.trimIndent()
         accountService.printStatement()
         //assert statement equal expected
+    }
+
+    "printStatement should show something" {
+        val baos = ByteArrayOutputStream()
+        val ps = PrintStream(baos)
+        val old = System.out
+        System.setOut(ps)
+
+        accountService.printStatement()
+
+        val written = String(baos.toByteArray())
+        written shouldBe "Date || Amount || Balance"
+
+        System.out.flush()
+        System.setOut(old)
     }
 
 })
