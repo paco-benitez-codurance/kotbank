@@ -63,5 +63,4 @@ class AccountServiceAcceptanceTest : StringSpec({
         System.out.flush()
         System.setOut(old)
     }
-
 })

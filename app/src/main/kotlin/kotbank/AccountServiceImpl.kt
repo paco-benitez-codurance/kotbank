@@ -1,9 +1,14 @@
 package kotbank
 
-class AccountServiceImpl(val output: Output = ConsoleOutput()) : AccountService {
+class AccountServiceImpl(private val output: Output = ConsoleOutput(), private val clock: Clock = Clock()) :
+    AccountService {
+
+    private var date: String? = null
+    private var amount: Int? = null
 
     override fun deposit(amount: Int) {
-        TODO("Not yet implemented")
+        this.amount = amount
+        this.date = this.clock.currentDate()
     }
 
     override fun withdraw(amount: Int) {
@@ -11,7 +16,12 @@ class AccountServiceImpl(val output: Output = ConsoleOutput()) : AccountService 
     }
 
     override fun printStatement() {
-        output.print("Date || Amount || Balance")
+        var result = "Date || Amount || Balance"
+        if (amount != null) {
+            result += "\n${this.date}||${this.amount}||${this.amount}"
+        }
+
+        output.print(result)
     }
 
 }
