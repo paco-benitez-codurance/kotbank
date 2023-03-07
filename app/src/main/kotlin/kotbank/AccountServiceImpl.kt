@@ -1,13 +1,17 @@
 package kotbank
 
+import java.util.Optional
+
+private const val HEADER = "Date || Amount || Balance"
+
 class AccountServiceImpl(private val output: Output = ConsoleOutput(), private val clock: Clock = Clock()) :
     AccountService {
 
     private var date: String? = null
-    private var amount: Int? = null
+    private var amount: MutableList<Int> = mutableListOf()
 
     override fun deposit(amount: Int) {
-        this.amount = amount
+        this.amount.add(amount)
         this.date = this.clock.currentDate()
     }
 
@@ -16,12 +20,17 @@ class AccountServiceImpl(private val output: Output = ConsoleOutput(), private v
     }
 
     override fun printStatement() {
-        var result = "Date || Amount || Balance"
-        if (amount != null) {
-            result += "\n${this.date}||${this.amount}||${this.amount}"
+
+        val res = amount.fold(
+            Pair(0, HEADER)
+        ) { acc, item ->
+            val total = acc.first + item
+            Pair(total, acc.second + formatTransaction(item, total))
         }
 
-        output.print(result)
+        output.print(res.second)
+
     }
 
+    private fun formatTransaction(item: Int, total: Int) = "\n${this.date}||${item}||${total}"
 }

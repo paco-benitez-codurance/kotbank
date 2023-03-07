@@ -1,2 +1,9 @@
 Vamos implementando deposit,
-hemos creado un primer test y necesitamos alguno más para cubrir más casos.
+ - Tenemos un deposit con la misma fecha
+
+TODO:
+    - Implementar cambio de fecha
+    - Implementar Stubs con not implemented
+    - Falta withdraw
+    
+Repository -> Ver que hacemos si lo dejamos como un test double o le damos implementación
