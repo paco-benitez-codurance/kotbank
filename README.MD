@@ -1,9 +1,2 @@
-Vamos implementando deposit,
- - Tenemos un deposit con la misma fecha
-
-TODO:
-    - Implementar cambio de fecha
-    - Implementar Stubs con not implemented
-    - Falta withdraw
-    
-Repository -> Ver que hacemos si lo dejamos como un test double o le damos implementación
+hemos sacado el repositorio tenemos que ver que hacemos con los test actuales,
+si los cambiamos a un mas mockist oriented o no

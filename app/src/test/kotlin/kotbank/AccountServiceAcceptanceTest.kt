@@ -27,7 +27,7 @@ class AccountServiceAcceptanceTest : StringSpec({
     beforeEach { accountService = AccountServiceImpl() }
     afterEach { }
 
-    "bank kata acceptance test".config(enabled = false) {
+    "bank kata acceptance test".config(enabled = true) {
         val accountService: AccountService = AccountServiceImpl()
 
         //Set date on 10-01-2012

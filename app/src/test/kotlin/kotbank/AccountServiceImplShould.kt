@@ -9,10 +9,12 @@ class AccountServiceImplShould : StringSpec({
     lateinit var output: Output
     lateinit var clock: Clock
     lateinit var accountService: AccountService
+    lateinit var repository: AccountRepository
 
     beforeEach {
         output = mockk(relaxed = true)
         clock = mockk()
+        repository = mockk()
         accountService = AccountServiceImpl(output, clock)
     }
 
@@ -42,7 +44,7 @@ class AccountServiceImplShould : StringSpec({
     }
 
     "deposit amount one time with not empty account" {
-        every { clock.currentDate() } returnsMany (listOf("10/01/2012", "10/01/2012"))
+        every { clock.currentDate() } returnsMany (listOf("10/01/2012", "11/01/2012"))
         accountService.deposit(1000)
 
         accountService.deposit(500)
@@ -53,7 +55,25 @@ class AccountServiceImplShould : StringSpec({
                 """
             Date || Amount || Balance
             10/01/2012||1000||1000
-            10/01/2012||500||1500
+            11/01/2012||500||1500
+        """.trimIndent()
+            )
+        }
+    }
+
+    "withdraw an amount one time with an empty account" {
+        val currentDate = "10/01/2012"
+        every { clock.currentDate() } returns currentDate
+
+
+        accountService.withdraw(1000)
+
+        accountService.printStatement()
+        verify {
+            output.print(
+                    """
+            Date || Amount || Balance
+            ${currentDate}||-1000||-1000
         """.trimIndent()
             )
         }

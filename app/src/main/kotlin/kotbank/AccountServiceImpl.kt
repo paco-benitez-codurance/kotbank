@@ -1,36 +1,44 @@
 package kotbank
 
-import java.util.Optional
-
 private const val HEADER = "Date || Amount || Balance"
 
-class AccountServiceImpl(private val output: Output = ConsoleOutput(), private val clock: Clock = Clock()) :
-    AccountService {
+open class AccountRepository {
+    private var amount: MutableList<LogAccount> = mutableListOf()
+    fun add(log: LogAccount) {
+        this.amount.add(log)
+    }
 
-    private var date: String? = null
-    private var amount: MutableList<Int> = mutableListOf()
+    fun getAmounts(): List<LogAccount> = this.amount
+}
+
+class AccountServiceImpl(
+        private val output: Output = ConsoleOutput(),
+        private val clock: Clock = Clock(),
+        private val repository: AccountRepository = AccountRepository()) :
+        AccountService {
+
 
     override fun deposit(amount: Int) {
-        this.amount.add(amount)
-        this.date = this.clock.currentDate()
+        var log = LogAccount(this.clock.currentDate(), amount)
+        repository.add(log)
     }
 
     override fun withdraw(amount: Int) {
-        TODO("Not yet implemented")
+        deposit(-amount)
     }
 
     override fun printStatement() {
 
-        val res = amount.fold(
-            Pair(0, HEADER)
+        val res = repository.getAmounts().fold(
+                Pair(0, HEADER)
         ) { acc, item ->
-            val total = acc.first + item
-            Pair(total, acc.second + formatTransaction(item, total))
+            val total = acc.first + item.amount
+            Pair(total, acc.second + formatTransaction(item.date, item.amount, total))
         }
 
         output.print(res.second)
 
     }
 
-    private fun formatTransaction(item: Int, total: Int) = "\n${this.date}||${item}||${total}"
+    private fun formatTransaction(date: String, item: Int, total: Int) = "\n${date}||${item}||${total}"
 }
