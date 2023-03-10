@@ -40,27 +40,43 @@ class AccountServiceAcceptanceTest : StringSpec({
         accountService.withdraw(500)
 
         val expected = """
-            Date       || Amount || Balance
-            14/01/2012 || -500   || 2500
-            13/01/2012 || 2000   || 3000
-            10/01/2012 || 1000   || 1000
+            Date||Amount||Balance
+            14/01/2012||-500||2500
+            13/01/2012||2000||3000
+            10/01/2012||1000||1000
         """.trimIndent()
+
+        val (baos, old) = initCaptureOutput()
+
         accountService.printStatement()
-        //assert statement equal expected
+
+        endCaptureOutput(old)
+
+        val written = String(baos.toByteArray())
+        written shouldBe expected
     }
 
     "printStatement should show something" {
-        val baos = ByteArrayOutputStream()
-        val ps = PrintStream(baos)
-        val old = System.out
-        System.setOut(ps)
+        val (baos, old) = initCaptureOutput()
 
         accountService.printStatement()
 
         val written = String(baos.toByteArray())
         written shouldBe "Date || Amount || Balance"
 
-        System.out.flush()
-        System.setOut(old)
+        endCaptureOutput(old)
     }
 })
+
+private fun endCaptureOutput(old: PrintStream) {
+    System.out.flush()
+    System.setOut(old)
+}
+
+private fun initCaptureOutput(): Pair<ByteArrayOutputStream, PrintStream> {
+    val baos = ByteArrayOutputStream()
+    val ps = PrintStream(baos)
+    val old = System.out
+    System.setOut(ps)
+    return Pair(baos, old)
+}

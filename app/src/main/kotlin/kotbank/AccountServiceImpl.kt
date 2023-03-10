@@ -2,15 +2,6 @@ package kotbank
 
 private const val HEADER = "Date || Amount || Balance"
 
-open class AccountRepository {
-    private var amount: MutableList<LogAccount> = mutableListOf()
-    fun add(log: LogAccount) {
-        this.amount.add(log)
-    }
-
-    fun getAmounts(): List<LogAccount> = this.amount
-}
-
 class AccountServiceImpl(
         private val output: Output = ConsoleOutput(),
         private val clock: Clock = Clock(),
