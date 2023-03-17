@@ -6,9 +6,13 @@ open class MemoryAccountRepository {
         this.amount.add(log)
     }
 
-    fun getAmounts(): List<LogAccount> = this.amount.sortedWith{ a,b -> compare(a,b) }
+    fun getAmounts(): List<LogAccount> = this.amount.sortedWith { a, b -> compare(a, b) }
 
-    private fun compare(a: LogAccount?, b: LogAccount?) : Int {
-        return 0 
+    private fun compare(a: LogAccount?, b: LogAccount?): Int {
+        val aStr = yyyymmddFormat(a)
+        val bStr = yyyymmddFormat(b)
+        return bStr.compareTo(aStr)
     }
+
+    private fun yyyymmddFormat(a: LogAccount?) = a!!.date.split("/").reversed().joinToString()
 }

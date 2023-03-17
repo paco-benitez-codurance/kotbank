@@ -68,7 +68,7 @@ class AccountServiceAcceptanceTest : StringSpec({
         accountService.printStatement()
 
         val written = String(baos.toByteArray())
-        written shouldBe "Date || Amount || Balance"
+        written shouldBe "Date||Amount||Balance"
 
         endCaptureOutput(old)
     }

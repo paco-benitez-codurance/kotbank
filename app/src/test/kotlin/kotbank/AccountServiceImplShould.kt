@@ -19,23 +19,23 @@ class AccountServiceImplShould : FreeSpec({
     }
 
     "printStatement" - {
-        "printStatement should write header"  {
-            every {repository.getAmounts()} returns emptyList()
+        "printStatement should write header" {
+            every { repository.getAmounts() } returns emptyList()
 
             accountService.printStatement()
 
-            verify { output.print("Date || Amount || Balance") }
+            verify { output.print("Date||Amount||Balance") }
         }
         "print when there is a LogAccount " {
             val currentDate = "10/01/2012"
-            every {repository.getAmounts()} returns listOf(LogAccount(currentDate,1000))
+            every { repository.getAmounts() } returns listOf(LogAccount(currentDate, 1000, 1000))
 
             accountService.printStatement()
 
             verify {
                 output.print(
-                    """
-            Date || Amount || Balance
+                        """
+            Date||Amount||Balance
             ${currentDate}||1000||1000
         """.trimIndent()
                 )
@@ -43,34 +43,36 @@ class AccountServiceImplShould : FreeSpec({
         }
 
         "print when there are more than one LogAccount" {
-            every {repository.getAmounts()} returns listOf(
-                LogAccount("10/01/2012", 1000),
-                LogAccount("11/01/2012", 500))
+            every { repository.getAmounts() } returns listOf(
+                    LogAccount("11/01/2012", 500, 1500),
+                    LogAccount("10/01/2012", 1000, 1000)
+            )
 
             accountService.printStatement()
             verify {
                 output.print(
-                    """
-            Date || Amount || Balance
-            10/01/2012||1000||1000
+                        """
+            Date||Amount||Balance
             11/01/2012||500||1500
+            10/01/2012||1000||1000
         """.trimIndent()
                 )
             }
         }
 
         "print when there are more than one LogAccount and negative amount" {
-            every {repository.getAmounts()} returns listOf(
-                LogAccount("10/01/2012", 1000),
-                LogAccount("11/01/2012", -500))
+            every { repository.getAmounts() } returns listOf(
+                    LogAccount("11/01/2012", -500, 500),
+                    LogAccount("10/01/2012", 1000, 1000),
+            )
 
             accountService.printStatement()
             verify {
                 output.print(
-                    """
-            Date || Amount || Balance
-            10/01/2012||1000||1000
+                        """
+            Date||Amount||Balance
             11/01/2012||-500||500
+            10/01/2012||1000||1000
         """.trimIndent()
                 )
             }
@@ -86,7 +88,7 @@ class AccountServiceImplShould : FreeSpec({
         accountService.deposit(1000)
 
         verify {
-            repository.add(LogAccount(currentDate, 1000))
+            repository.add(LogAccount(currentDate, 1000, 1000))
         }
     }
 
@@ -97,7 +99,7 @@ class AccountServiceImplShould : FreeSpec({
 
         accountService.withdraw(1000)
         verify {
-            repository.add(LogAccount(currentDate, -1000))
+            repository.add(LogAccount(currentDate, -1000, -1000))
         }
     }
 })
