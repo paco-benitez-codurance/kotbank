@@ -5,8 +5,11 @@ package kotbank
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.mockk
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import java.util.stream.Collectors
 
 
 /*
@@ -28,7 +31,10 @@ class AccountServiceAcceptanceTest : StringSpec({
     afterEach { }
 
     "bank kata acceptance test".config(enabled = true) {
-        val accountService: AccountService = AccountServiceImpl()
+        val clock = mockk<Clock>();
+        every { clock.currentDate() } returns  "10/01/2012" andThen "13/01/2012" andThen "14/01/2012";
+
+        val accountService: AccountService = AccountServiceImpl(clock = clock)
 
         //Set date on 10-01-2012
         accountService.deposit(1000)

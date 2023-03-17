@@ -5,7 +5,7 @@ private const val HEADER = "Date || Amount || Balance"
 class AccountServiceImpl(
         private val output: Output = ConsoleOutput(),
         private val clock: Clock = Clock(),
-        private val repository: AccountRepository = AccountRepository()) :
+        private val repository: MemoryAccountRepository = MemoryAccountRepository()) :
         AccountService {
 
 

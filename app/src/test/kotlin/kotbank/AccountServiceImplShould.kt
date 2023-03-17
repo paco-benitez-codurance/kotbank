@@ -1,7 +1,6 @@
 package kotbank
 
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.core.spec.style.StringSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -10,7 +9,7 @@ class AccountServiceImplShould : FreeSpec({
     lateinit var output: Output
     lateinit var clock: Clock
     lateinit var accountService: AccountService
-    lateinit var repository: AccountRepository
+    lateinit var repository: MemoryAccountRepository
 
     beforeEach {
         output = mockk(relaxed = true)
