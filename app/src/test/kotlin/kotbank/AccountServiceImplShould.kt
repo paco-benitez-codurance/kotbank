@@ -4,81 +4,31 @@ import io.kotest.core.spec.style.FreeSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotbank.Money.Companion.toMoney
 
 class AccountServiceImplShould : FreeSpec({
-    lateinit var output: Output
     lateinit var clock: Clock
     lateinit var accountService: AccountService
     lateinit var repository: MemoryAccountRepository
+    lateinit var printService: PrintService
 
     beforeEach {
-        output = mockk(relaxed = true)
         clock = mockk()
         repository = mockk(relaxed = true)
-        accountService = AccountServiceImpl(output, clock, repository)
+        printService = mockk(relaxed = true)
+        accountService = AccountServiceImpl(clock, repository, printService)
     }
 
-    "printStatement" - {
-        "printStatement should write header" {
-            every { repository.getAmounts() } returns emptyList()
+    "print when there is a LogAccount " {
+        val currentDate = "10/01/2012"
+        val accounts = listOf(LogAccount(currentDate, 1000.toMoney(), 1000))
+        every { repository.getAmounts() } returns accounts
 
-            accountService.printStatement()
+        accountService.printStatement()
 
-            verify { output.print("Date||Amount||Balance") }
-        }
-        "print when there is a LogAccount " {
-            val currentDate = "10/01/2012"
-            every { repository.getAmounts() } returns listOf(LogAccount(currentDate, 1000, 1000))
+        verify { printService.printStatement(accounts) }
 
-            accountService.printStatement()
-
-            verify {
-                output.print(
-                        """
-            Date||Amount||Balance
-            ${currentDate}||1000||1000
-        """.trimIndent()
-                )
-            }
-        }
-
-        "print when there are more than one LogAccount" {
-            every { repository.getAmounts() } returns listOf(
-                    LogAccount("11/01/2012", 500, 1500),
-                    LogAccount("10/01/2012", 1000, 1000)
-            )
-
-            accountService.printStatement()
-            verify {
-                output.print(
-                        """
-            Date||Amount||Balance
-            11/01/2012||500||1500
-            10/01/2012||1000||1000
-        """.trimIndent()
-                )
-            }
-        }
-
-        "print when there are more than one LogAccount and negative amount" {
-            every { repository.getAmounts() } returns listOf(
-                    LogAccount("11/01/2012", -500, 500),
-                    LogAccount("10/01/2012", 1000, 1000),
-            )
-
-            accountService.printStatement()
-            verify {
-                output.print(
-                        """
-            Date||Amount||Balance
-            11/01/2012||-500||500
-            10/01/2012||1000||1000
-        """.trimIndent()
-                )
-            }
-        }
     }
-
 
     "deposit an amount one time with an empty account" {
         val currentDate = "10/01/2012"
@@ -88,7 +38,7 @@ class AccountServiceImplShould : FreeSpec({
         accountService.deposit(1000)
 
         verify {
-            repository.add(LogAccount(currentDate, 1000, 1000))
+            repository.add(LogAccount(currentDate, 1000.toMoney(), 1000))
         }
     }
 
@@ -99,7 +49,7 @@ class AccountServiceImplShould : FreeSpec({
 
         accountService.withdraw(1000)
         verify {
-            repository.add(LogAccount(currentDate, -1000, -1000))
+            repository.add(LogAccount(currentDate, (-1000).toMoney(), -1000))
         }
     }
 })

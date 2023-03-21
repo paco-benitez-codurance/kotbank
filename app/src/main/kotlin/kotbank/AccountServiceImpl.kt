@@ -1,17 +1,18 @@
 package kotbank
 
-private const val HEADER = "Date||Amount||Balance"
+import kotbank.Money.Companion.toMoney
+
 
 class AccountServiceImpl(
-        private val output: Output = ConsoleOutput(),
         private val clock: Clock = Clock(),
-        private val repository: MemoryAccountRepository = MemoryAccountRepository()) :
+        private val repository: MemoryAccountRepository = MemoryAccountRepository(),
+        private val printService: PrintService = PrintService()) :
         AccountService {
 
 
     override fun deposit(amount: Int) {
-        val total = this.repository.getAmounts().sumOf { it.amount } + amount
-        val log = LogAccount(this.clock.currentDate(), amount, total)
+        val total = this.repository.getAmounts().sumOf { it.amount.value } + amount
+        val log = LogAccount(this.clock.currentDate(), amount.toMoney(), total)
         repository.add(log)
     }
 
@@ -20,16 +21,6 @@ class AccountServiceImpl(
     }
 
     override fun printStatement() {
-
-        val res = repository.getAmounts().fold(
-                HEADER
-        ) { acc, item ->
-            acc + formatTransaction(item.date, item.amount, item.total)
-        }
-
-        output.print(res)
-
+        printService.printStatement(repository.getAmounts())
     }
-
-    private fun formatTransaction(date: String, item: Int, total: Int) = "\n${date}||${item}||${total}"
 }

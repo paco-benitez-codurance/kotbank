@@ -2,6 +2,6 @@ package kotbank
 
 data class LogAccount(
         val date: String,
-        val amount: Int,
+        val amount: Money,
         val total: Int
 )
